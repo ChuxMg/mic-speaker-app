@@ -1,6 +1,13 @@
-"use client"
+"use client";
 
 import { useEffect, useRef, useState } from "react";
+
+interface CustomWindow extends Window {
+  AudioContext: typeof AudioContext;
+  webkitAudioContext: typeof AudioContext;
+}
+
+declare const window: CustomWindow;
 
 export default function Home() {
   const [listening, setListening] = useState(false);
@@ -22,8 +29,8 @@ export default function Home() {
       navigator.mediaDevices
         .getUserMedia({ audio: true })
         .then((stream) => {
-          const audioCtx = new (window.AudioContext ||
-            (window as any).webkitAudioContext)();
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          const audioCtx = new AudioContext();
           const source = audioCtx.createMediaStreamSource(stream);
           source.connect(audioCtx.destination);
           audioRef.current = audioCtx;
